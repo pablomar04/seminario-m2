@@ -16,6 +16,7 @@ class CustomerCredit
     const PAYMENT_METHOD_USERCREDIT_CODE = 'customer_credit';
 
 
+
     /**
      * Payment method code
      *
@@ -60,12 +61,19 @@ class CustomerCredit
 
     public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
+        //Si ya viene habilitado el método (verificando si está activo)
         $isAvailable = parent::isAvailable($quote);
 
-        //Si ya viene habilitado el método (verificando si está activo)
-        if($isAvailable){
-            //Tomo el valor de si tiene habilitado el credito o no para saber si lo muestro
-            $isAvailable = (bool) $this->customerSession->getCustomer()->getData('enable_customer_credit');
+        if ($isAvailable){
+          //Tomo el valor de si tiene habilitado el credito o no para saber si lo muestro
+          $isAvailable = (bool) $this->customerSession->getCustomer()->getData('enable_customer_credit');
+            //Si usuario tiene habilitado el metodo de pago verifico que el total no sea mayor al permitido
+            if ($isAvailable){
+              $importe = $quote->getData('base_grand_total');
+              //Tomo el valor que esta guardado en la configuracion segun el atributo de la clase padre
+              $limite = $this->_scopeConfig->getValue('payment/customer_credit/limite');
+              $isAvailable = (bool)($importe <= $limite);
+            }
         }
 
         return $isAvailable;

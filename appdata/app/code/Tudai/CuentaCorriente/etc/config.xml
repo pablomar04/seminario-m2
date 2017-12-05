@@ -7,6 +7,7 @@
                 <model>Tudai\CuentaCorriente\Model\CustomerCredit</model>
                 <title>Cuenta Corriente</title>
                 <group>tudai-payment</group>
+                <limite>1000</limite>
             </customer_credit>
         </payment>
     </default>
